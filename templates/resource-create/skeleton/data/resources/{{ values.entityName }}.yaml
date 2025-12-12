@@ -13,11 +13,10 @@ metadata:
   {% if values.technology %}{% set _ = ann.__setitem__('technology', values.technology) %}{% endif %}
   {% if values.version %}{% set _ = ann.__setitem__('version', values.version) %}{% endif %}
 
-  {% if ann and (ann | length) > 0 %}
+  {% if values.technology or values.version %}
   annotations:
-  {% for k, v in ann %}
-    {{ k }}: {{ v | dump }}
-  {% endfor %}
+    {% if values.technology %}technology: {{ values.technology | dump }}{% endif %}
+    {% if values.version %}version: {{ values.version | dump }}{% endif %}
   {% endif %}
 spec:
   type: {{ values.resourceType | dump }}
