@@ -166,7 +166,6 @@ spec:
       action: publish:github
       input:
         repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
-        title: "catalog: add resource ${{ parameters.entityName }}"
         targetBranchName: main
 
   output:
