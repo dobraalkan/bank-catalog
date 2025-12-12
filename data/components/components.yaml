@@ -1,0 +1,429 @@
+# components.yaml
+# Not: spec.system alanlarını kendi systems.yaml içindeki metadata.name'ler ile eşleştir.
+# dependsOn referansları: component:default/<name> ve resource:default/<name>
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: branch-frontend
+  description: Şube ekranları (teller/gişe + operasyon) arayüzü
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/channel-branch
+  system: channel-branch
+  dependsOn:
+    - component:default/branch-bff
+    - component:default/identity-service
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-app
+  description: Mobil bankacılık uygulaması
+spec:
+  type: mobile-app
+  lifecycle: production
+  owner: group:default/channel-mobile
+  system: channel-mobile
+  dependsOn:
+    - component:default/mobile-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: internet-banking-frontend
+  description: İnternet bankacılığı web arayüzü
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/channel-internet
+  system: channel-internet
+  dependsOn:
+    - component:default/web-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-app
+  description: ATM uygulaması (ATM üzerinde çalışan kanal yazılımı)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-atm
+  system: channel-atm
+  dependsOn:
+    - component:default/atm-switch-adapter
+    - component:default/cards-service
+    - component:default/identity-service
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: call-center-desktop
+  description: Çağrı merkezi temsilci uygulaması (desktop/web)
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/channel-call-center
+  system: channel-call-center
+  dependsOn:
+    - component:default/call-center-bff
+    - component:default/crm-service
+    - component:default/identity-service
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: open-banking-api
+  description: Açık bankacılık dış API yüzeyi (PSD2/OB standardı)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-open-banking
+  system: channel-open-banking
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/open-banking-bff
+    - component:default/consent-service
+
+# --- BFF / Experience Layer ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-bff
+  description: Mobil kanal için BFF (orchestrator)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/digital-experience
+  system: digital-experience
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/identity-service
+    - component:default/customer-profile-service
+    - component:default/accounts-service
+    - component:default/payments-orchestrator
+    - component:default/limits-service
+    - component:default/notifications-service
+    - resource:default/redis-cluster
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: web-bff
+  description: İnternet bankacılığı için BFF
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/digital-experience
+  system: digital-experience
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/identity-service
+    - component:default/customer-profile-service
+    - component:default/accounts-service
+    - component:default/payments-orchestrator
+    - component:default/limits-service
+    - component:default/notifications-service
+    - resource:default/redis-cluster
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: branch-bff
+  description: Şube süreçleri için BFF (müşteri 360, işlem orkestrasyonu)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-branch
+  system: channel-branch
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/identity-service
+    - component:default/customer-profile-service
+    - component:default/accounts-service
+    - component:default/payments-orchestrator
+    - component:default/loans-service
+    - component:default/cards-service
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: call-center-bff
+  description: Çağrı merkezi için BFF
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-call-center
+  system: channel-call-center
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/identity-service
+    - component:default/customer-profile-service
+    - component:default/accounts-service
+    - component:default/payments-orchestrator
+    - component:default/crm-service
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: open-banking-bff
+  description: Açık bankacılık için orkestrasyon + SCA/consent akışları
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-open-banking
+  system: channel-open-banking
+  dependsOn:
+    - component:default/api-gateway
+    - component:default/identity-service
+    - component:default/consent-service
+    - component:default/customer-profile-service
+    - component:default/accounts-service
+    - component:default/payments-orchestrator
+    - resource:default/kafka-cluster
+
+# --- Domain / Core Services ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: identity-service
+  description: Kimlik doğrulama, token, MFA, SSO
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/iam
+  system: identity-access-management
+  dependsOn:
+    - resource:default/iam-db
+    - resource:default/kms
+    - resource:default/sms-gateway
+    - resource:default/email-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-profile-service
+  description: Müşteri profil/iletişim/segment/KYC temel servisi
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/customer-domain
+  system: customer-domain
+  dependsOn:
+    - resource:default/customer-profile-db
+    - resource:default/customer-events-topic
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: accounts-service
+  description: Hesap, bakiye, hareket, hesap özeti
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/core-banking
+  system: core-banking
+  dependsOn:
+    - resource:default/core-banking-db
+    - component:default/ledger-service
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ledger-service
+  description: Muhasebe/defter (transaction ledger)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/core-banking
+  system: core-banking
+  dependsOn:
+    - resource:default/ledger-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payments-orchestrator
+  description: EFT/Havale/FAST/Swift vb ödeme orkestrasyonu
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/payments
+  system: payments
+  dependsOn:
+    - resource:default/payments-db
+    - component:default/limits-service
+    - component:default/fraud-engine
+    - resource:default/payment-events-topic
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cards-service
+  description: Kart yönetimi, otorizasyon entegrasyonları
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/cards
+  system: cards
+  dependsOn:
+    - resource:default/cards-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: loans-service
+  description: Kredi başvuru, teklif, tahsis, geri ödeme planı
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/loans
+  system: loans
+  dependsOn:
+    - resource:default/loans-db
+    - component:default/fraud-engine
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: limits-service
+  description: Limit/kurallar (işlem limitleri, kanal limitleri, risk limitleri)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/risk
+  system: risk-and-limits
+  dependsOn:
+    - resource:default/limits-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: notifications-service
+  description: SMS/e-posta/push bildirimleri
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/communications
+  system: communications
+  dependsOn:
+    - resource:default/notifications-db
+    - resource:default/sms-gateway
+    - resource:default/email-gateway
+    - resource:default/push-gateway
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: consent-service
+  description: Açık bankacılık rıza (consent) ve yetkilendirme kayıtları
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/open-banking
+  system: channel-open-banking
+  dependsOn:
+    - resource:default/consent-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fraud-engine
+  description: Fraud skorlama, anomali, kural motoru
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/fraud
+  system: fraud-and-aml
+  dependsOn:
+    - resource:default/fraud-db
+    - resource:default/fraud-alerts-topic
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-service
+  description: CRM (müşteri 360, etkileşim kayıtları, kampanya)
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/crm
+  system: crm
+  dependsOn:
+    - resource:default/crm-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-switch-adapter
+  description: ATM switch entegrasyon adaptörü
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/channel-atm
+  system: channel-atm
+  dependsOn:
+    - resource:default/atm-db
+    - component:default/cards-service
+    - component:default/accounts-service
+    - resource:default/kafka-cluster
+
+# --- Platform / Shared ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-gateway
+  description: Kanal trafiği için API gateway / WAF / rate limit
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/platform
+  system: platform
+  dependsOn:
+    - resource:default/tls-certificates
+    - resource:default/kms

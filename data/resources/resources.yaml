@@ -1,0 +1,353 @@
+# resources.yaml (with technology + version annotations)
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: kafka-cluster
+  description: Event streaming platform (ortak)
+  annotations:
+    technology: Apache Kafka
+    version: "3.6"
+spec:
+  type: messaging
+  owner: group:default/platform
+  system: platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cluster
+  description: Ortak cache (BFF ve servisler)
+  annotations:
+    technology: Redis
+    version: "7.2"
+spec:
+  type: cache
+  owner: group:default/platform
+  system: platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: kms
+  description: Anahtar yönetimi / şifreleme (HSM/KMS)
+  annotations:
+    technology: HashiCorp Vault
+    version: "1.15"
+spec:
+  type: security
+  owner: group:default/platform
+  system: platform
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: tls-certificates
+  description: TLS sertifikaları (gateway + servisler)
+  annotations:
+    technology: ACME / PKI
+    version: "v2"
+spec:
+  type: security
+  owner: group:default/platform
+  system: platform
+
+# --- IAM ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: iam-db
+  description: IAM veritabanı (kullanıcı, cihaz, oturum)
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/iam
+  system: identity-access-management
+
+# --- Customer Domain ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: customer-profile-db
+  description: Müşteri profil DB (KYC temel veriler)
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/customer-domain
+  system: customer-domain
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: customer-events-topic
+  description: Customer domain event topic
+  annotations:
+    technology: Kafka Topic
+    version: "3.6"
+spec:
+  type: topic
+  owner: group:default/customer-domain
+  system: customer-domain
+  dependsOn:
+    - resource:default/kafka-cluster
+
+# --- Core Banking ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: core-banking-db
+  description: Core banking DB (hesap master data vb.)
+  annotations:
+    technology: Oracle Database
+    version: "19c"
+spec:
+  type: database
+  owner: group:default/core-banking
+  system: core-banking
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ledger-db
+  description: Ledger DB (hareket/muhasebe)
+  annotations:
+    technology: Oracle Database
+    version: "19c"
+spec:
+  type: database
+  owner: group:default/core-banking
+  system: core-banking
+
+# --- Payments ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: payments-db
+  description: Ödeme orkestrasyonu DB (state, idempotency, instruction)
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/payments
+  system: payments
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: payment-events-topic
+  description: Payment events topic
+  annotations:
+    technology: Kafka Topic
+    version: "3.6"
+spec:
+  type: topic
+  owner: group:default/payments
+  system: payments
+  dependsOn:
+    - resource:default/kafka-cluster
+
+# --- Cards ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: cards-db
+  description: Kart DB (ürün, limit, durum)
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/cards
+  system: cards
+
+# --- Loans ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: loans-db
+  description: Kredi DB
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/loans
+  system: loans
+
+# --- Risk & Limits ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: limits-db
+  description: Limit ve kural DB
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/risk
+  system: risk-and-limits
+
+# --- Communications ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: notifications-db
+  description: Bildirim şablonları + gönderim kayıtları
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/communications
+  system: communications
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: sms-gateway
+  description: SMS sağlayıcı bağlantısı
+  annotations:
+    technology: External SMS Provider
+    version: "v1"
+spec:
+  type: external-service
+  owner: group:default/communications
+  system: communications
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: email-gateway
+  description: E-posta sağlayıcı bağlantısı
+  annotations:
+    technology: External Email Provider
+    version: "v1"
+spec:
+  type: external-service
+  owner: group:default/communications
+  system: communications
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: push-gateway
+  description: Push notification sağlayıcı bağlantısı
+  annotations:
+    technology: Push Provider (FCM/APNS)
+    version: "2025-01"
+spec:
+  type: external-service
+  owner: group:default/communications
+  system: communications
+
+# --- Open Banking ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: consent-db
+  description: Consent kayıtları DB (open banking)
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/open-banking
+  system: channel-open-banking
+
+# --- Fraud ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: fraud-db
+  description: Fraud model/feature ve karar kayıtları
+  annotations:
+    technology: Elasticsearch
+    version: "8.13"
+spec:
+  type: database
+  owner: group:default/fraud
+  system: fraud-and-aml
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: fraud-alerts-topic
+  description: Fraud alerts topic
+  annotations:
+    technology: Kafka Topic
+    version: "3.6"
+spec:
+  type: topic
+  owner: group:default/fraud
+  system: fraud-and-aml
+  dependsOn:
+    - resource:default/kafka-cluster
+
+# --- CRM ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: crm-db
+  description: CRM DB
+  annotations:
+    technology: Microsoft SQL Server
+    version: "2022"
+spec:
+  type: database
+  owner: group:default/crm
+  system: crm
+
+# --- ATM ---
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: atm-db
+  description: ATM konfig + cihaz envanteri + kaset/para yönetimi
+  annotations:
+    technology: PostgreSQL
+    version: "15"
+spec:
+  type: database
+  owner: group:default/channel-atm
+  system: channel-atm
