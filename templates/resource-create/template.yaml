@@ -150,7 +150,7 @@ spec:
       name: Render Resource entity YAML
       action: fetch:template
       input:
-        templateUrl: ./skeleton
+        url: ./skeleton
         targetPath: .
         values:
           entityName: ${{ parameters.entityName }}

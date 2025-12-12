@@ -38,7 +38,7 @@ spec:
       name: Render Domain entity YAML
       action: fetch:template
       input:
-        templateUrl: ./skeleton
+        url: ./skeleton
         targetPath: .
         values:
           entityName: ${{ parameters.entityName }}
