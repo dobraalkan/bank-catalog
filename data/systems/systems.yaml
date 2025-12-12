@@ -1,0 +1,887 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: infra-architecture
+  title: InfraArchitecture
+  description: Infrastructure architecture and standards.
+  tags: [infrastructure, architecture]
+spec:
+  owner: group:default/altyapi-mimari-yonetimi
+  domain: domain:default/infrastructure
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: platform-engineering
+  title: PlatformEngineering
+  description: Shared platform services for application teams.
+  tags: [infrastructure, platform]
+spec:
+  owner: group:default/altyapi-mimari-yonetimi
+  domain: domain:default/infrastructure
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: environment-provisioning
+  title: EnvironmentProvisioning
+  description: Provisioning of environments and infrastructure automation.
+  tags: [infrastructure, automation]
+spec:
+  owner: group:default/altyapi-mimari-yonetimi
+  domain: domain:default/infrastructure
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: infra-automation
+  title: InfraAutomation
+  description: Infrastructure as code and configuration automation.
+  tags: [infrastructure, automation]
+spec:
+  owner: group:default/altyapi-mimari-yonetimi
+  domain: domain:default/infrastructure
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: treasury-positioning
+  title: TreasuryPositioning
+  description: Treasury positions, limits and exposures.
+  tags: [treasury]
+spec:
+  owner: group:default/hazine-teknolojileri
+  domain: domain:default/treasury
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: liquidity-management
+  title: LiquidityManagement
+  description: Liquidity forecasting and daily liquidity controls.
+  tags: [treasury, liquidity]
+spec:
+  owner: group:default/hazine-teknolojileri
+  domain: domain:default/treasury
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: treasury-dealing
+  title: TreasuryDealing
+  description: Dealing systems for treasury trading desks.
+  tags: [treasury, trading]
+spec:
+  owner: group:default/hazine-teknolojileri
+  domain: domain:default/treasury
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: treasury-settlement
+  title: TreasurySettlement
+  description: Settlement and confirmations for treasury transactions.
+  tags: [treasury, settlement]
+spec:
+  owner: group:default/hazine-teknolojileri
+  domain: domain:default/treasury
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: crm-profile
+  title: CrmProfile
+  description: Central CRM customer profile management.
+  tags: [crm]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  domain: domain:default/crm
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: crm-insights
+  title: CrmInsights
+  description: Analytics and behavior insights on CRM data.
+  tags: [crm, analytics]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  domain: domain:default/crm
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: crm-segmentation
+  title: CrmSegmentation
+  description: Customer segmentation and targeting engine.
+  tags: [crm, segmentation]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  domain: domain:default/crm
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: crm-loyalty
+  title: CrmLoyalty
+  description: Loyalty and rewards management for customers.
+  tags: [crm, loyalty]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  domain: domain:default/crm
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: crm-campaigns
+  title: CrmCampaigns
+  description: Campaign execution and tracking on CRM base.
+  tags: [crm, campaigns]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  domain: domain:default/crm
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: customer-profile
+  title: CustomerProfile
+  description: Customer profile and preferences for sales channels.
+  tags: [customer]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/customer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: customer-360
+  title: Customer360
+  description: 360-degree view of customer data for sales and service.
+  tags: [customer, "360"]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/customer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: customer-interaction
+  title: CustomerInteraction
+  description: Orchestration of customer interactions across channels.
+  tags: [customer, interaction]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/customer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: sales-pipeline
+  title: SalesPipeline
+  description: Sales pipeline and opportunity management.
+  tags: [sales]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/sales
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: offer-management
+  title: OfferManagement
+  description: Product offers, pricing and bundling engine.
+  tags: [sales, offers]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/sales
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: sales-performance
+  title: SalesPerformance
+  description: Sales performance tracking and dashboards.
+  tags: [sales, analytics]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  domain: domain:default/sales
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: investment-products
+  title: InvestmentProducts
+  description: Catalog of investment and wealth products.
+  tags: [investments]
+spec:
+  owner: group:default/yatirim-teknolojileri
+  domain: domain:default/investments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: order-management
+  title: OrderManagement
+  description: Order routing for investment transactions.
+  tags: [investments, orders]
+spec:
+  owner: group:default/yatirim-teknolojileri
+  domain: domain:default/investments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: portfolio-management
+  title: PortfolioManagement
+  description: Portfolio positions, valuations and performance.
+  tags: [investments, portfolio]
+spec:
+  owner: group:default/yatirim-teknolojileri
+  domain: domain:default/investments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: investment-reporting
+  title: InvestmentReporting
+  description: Reporting and statements for investment customers.
+  tags: [investments, reporting]
+spec:
+  owner: group:default/yatirim-teknolojileri
+  domain: domain:default/investments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: atm-network
+  title: ATMNetwork
+  description: ATM network switching and routing.
+  tags: [payments, atm]
+spec:
+  owner: group:default/atm-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: atm-device-management
+  title: ATMDeviceManagement
+  description: ATM device configuration and monitoring.
+  tags: [payments, atm]
+spec:
+  owner: group:default/atm-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: atm-cash-replenishment
+  title: ATMCashReplenishment
+  description: Cash replenishment planning for ATMs.
+  tags: [payments, atm, cash]
+spec:
+  owner: group:default/atm-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: digital-payments
+  title: DigitalPayments
+  description: Core digital payments processing engine.
+  tags: [payments, digital]
+spec:
+  owner: group:default/dijital-odeme-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: wallet-processing
+  title: WalletProcessing
+  description: Digital wallet accounts and transactions.
+  tags: [payments, wallet]
+spec:
+  owner: group:default/dijital-odeme-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: payment-gateway
+  title: PaymentGateway
+  description: API gateway for payment initiation and authorization.
+  tags: [payments, api]
+spec:
+  owner: group:default/dijital-odeme-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tokenization
+  title: Tokenization
+  description: Payment tokenization and device binding services.
+  tags: [payments, security]
+spec:
+  owner: group:default/dijital-odeme-teknolojileri
+  domain: domain:default/payments
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-onboarding
+  title: CardOnboarding
+  description: Card application and onboarding processing.
+  tags: [cards, onboarding]
+spec:
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-application-scoring
+  title: CardApplicationScoring
+  description: Credit scoring for card applications.
+  tags: [cards, risk]
+spec:
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-campaigns
+  title: CardCampaigns
+  description: Marketing campaigns and offers for cardholders.
+  tags: [cards, campaigns]
+spec:
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-core
+  title: CardCore
+  description: Core card account and transaction processing.
+  tags: [cards, core]
+spec:
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-limit-management
+  title: CardLimitManagement
+  description: Card limits, blocks and controls.
+  tags: [cards, limits]
+spec:
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-billing
+  title: CardBilling
+  description: Card statements, billing cycles and payments.
+  tags: [cards, billing]
+spec:
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: card-collections
+  title: CardCollections
+  description: Overdue card accounts and collections workflows.
+  tags: [cards, collections]
+spec:
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  domain: domain:default/cards
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: merchant-onboarding
+  title: MerchantOnboarding
+  description: Merchant onboarding and KYC for acquiring.
+  tags: [merchant]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/merchant
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: merchant-settlement
+  title: MerchantSettlement
+  description: Settlement and reconciliation for merchant transactions.
+  tags: [merchant, settlement]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/merchant
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: merchant-portal
+  title: MerchantPortal
+  description: Portal for merchants to view and manage their accounts.
+  tags: [merchant, portal]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/merchant
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: pos-terminal-management
+  title: PosTerminalManagement
+  description: POS terminal inventory and configuration.
+  tags: [pos, terminal]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/pos
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: pos-transaction-routing
+  title: PosTransactionRouting
+  description: Routing and authorization for POS transactions.
+  tags: [pos, routing]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/pos
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: pos-monitoring
+  title: PosMonitoring
+  description: Monitoring and alerting for POS network issues.
+  tags: [pos, monitoring]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  domain: domain:default/pos
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: internet-banking
+  title: InternetBanking
+  description: Retail and SME internet banking channel.
+  tags: [digital, channel]
+spec:
+  owner: group:default/dijital-bankacilik-teknolojileri
+  domain: domain:default/digital
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: digital-onboarding
+  title: DigitalOnboarding
+  description: End-to-end digital customer onboarding journeys.
+  tags: [digital, onboarding]
+spec:
+  owner: group:default/dijital-bankacilik-teknolojileri
+  domain: domain:default/digital
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: digital-auth
+  title: DigitalAuth
+  description: Authentication and SCA for digital channels.
+  tags: [digital, security]
+spec:
+  owner: group:default/dijital-bankacilik-teknolojileri
+  domain: domain:default/digital
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: digital-notifications
+  title: DigitalNotifications
+  description: Notification and messaging services for digital channels.
+  tags: [digital, notifications]
+spec:
+  owner: group:default/dijital-bankacilik-teknolojileri
+  domain: domain:default/digital
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: architecture-repository
+  title: ArchitectureRepository
+  description: Central repository of architecture artefacts.
+  tags: [architecture]
+spec:
+  owner: group:default/kurumsal-mimari
+  domain: domain:default/enterprise-architecture
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: architecture-standards
+  title: ArchitectureStandards
+  description: Architecture principles and standards catalogue.
+  tags: [architecture, standards]
+spec:
+  owner: group:default/kurumsal-mimari
+  domain: domain:default/enterprise-architecture
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: solution-review
+  title: SolutionReview
+  description: Solution architecture review workflow and repository.
+  tags: [architecture, governance]
+spec:
+  owner: group:default/kurumsal-mimari
+  domain: domain:default/enterprise-architecture
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: roadmap-management
+  title: RoadmapManagement
+  description: Technology and capability roadmaps.
+  tags: [architecture, roadmap]
+spec:
+  owner: group:default/kurumsal-mimari
+  domain: domain:default/enterprise-architecture
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: mobile-banking
+  title: MobileBanking
+  description: Native mobile banking applications.
+  tags: [mobile, channel]
+spec:
+  owner: group:default/mobil-bankacilik-teknolojileri
+  domain: domain:default/mobile
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: mobile-app-platform
+  title: MobileAppPlatform
+  description: Shared mobile app platform and SDKs.
+  tags: [mobile, platform]
+spec:
+  owner: group:default/mobil-bankacilik-teknolojileri
+  domain: domain:default/mobile
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: mobile-auth
+  title: MobileAuth
+  description: Authentication and device binding for mobile.
+  tags: [mobile, security]
+spec:
+  owner: group:default/mobil-bankacilik-teknolojileri
+  domain: domain:default/mobile
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: push-notifications
+  title: PushNotifications
+  description: Push notification services for mobile apps.
+  tags: [mobile, notifications]
+spec:
+  owner: group:default/mobil-bankacilik-teknolojileri
+  domain: domain:default/mobile
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: retail-loan-origination
+  title: RetailLoanOrigination
+  description: Origination workflow for retail loans.
+  tags: [loan, retail]
+spec:
+  owner: group:default/bireysel-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: retail-loan-servicing
+  title: RetailLoanServicing
+  description: Servicing and schedule management for retail loans.
+  tags: [loan, retail]
+spec:
+  owner: group:default/bireysel-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: retail-loan-collections
+  title: RetailLoanCollections
+  description: Collections workflows for overdue retail loans.
+  tags: [loan, retail, collections]
+spec:
+  owner: group:default/bireysel-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: corporate-loan-origination
+  title: CorporateLoanOrigination
+  description: Origination workflow for corporate loans.
+  tags: [loan, corporate]
+spec:
+  owner: group:default/ticari-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: corporate-loan-servicing
+  title: CorporateLoanServicing
+  description: Servicing and schedule management for corporate loans.
+  tags: [loan, corporate]
+spec:
+  owner: group:default/ticari-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: limit-and-collateral
+  title: LimitAndCollateral
+  description: Limits, collateral and exposures for loan products.
+  tags: [loan, risk]
+spec:
+  owner: group:default/ticari-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: corporate-collections
+  title: CorporateCollections
+  description: Collections workflows for overdue corporate loans.
+  tags: [loan, corporate, collections]
+spec:
+  owner: group:default/ticari-kredi-teknolojileri
+  domain: domain:default/loan
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: cash-pooling
+  title: CashPooling
+  description: Cash pooling and sweeping for corporate customers.
+  tags: [cash-management]
+spec:
+  owner: group:default/nakit-yonetimi-teknolojileri
+  domain: domain:default/cash-management
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: liquidity-forecasting
+  title: LiquidityForecasting
+  description: Forecasting and analytics for cash and liquidity.
+  tags: [cash-management, liquidity]
+spec:
+  owner: group:default/nakit-yonetimi-teknolojileri
+  domain: domain:default/cash-management
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: collections-and-receivables
+  title: CollectionsAndReceivables
+  description: Collections, receivables and reconciliation for cash management.
+  tags: [cash-management, collections]
+spec:
+  owner: group:default/nakit-yonetimi-teknolojileri
+  domain: domain:default/cash-management
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: disbursements
+  title: Disbursements
+  description: Bulk and scheduled disbursement services.
+  tags: [cash-management, payments]
+spec:
+  owner: group:default/nakit-yonetimi-teknolojileri
+  domain: domain:default/cash-management
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: funds-transfer
+  title: FundsTransfer
+  description: Core domestic funds transfer processing.
+  tags: [transfer, payments]
+spec:
+  owner: group:default/para-transferi-teknolojileri
+  domain: domain:default/transfer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: instant-transfer
+  title: InstantTransfer
+  description: Instant and real-time transfer services.
+  tags: [transfer, instant]
+spec:
+  owner: group:default/para-transferi-teknolojileri
+  domain: domain:default/transfer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: swift-transfer
+  title: SwiftTransfer
+  description: SWIFT-based cross-border transfer services.
+  tags: [transfer, swift]
+spec:
+  owner: group:default/para-transferi-teknolojileri
+  domain: domain:default/transfer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: standing-orders
+  title: StandingOrders
+  description: Standing orders and recurring transfers.
+  tags: [transfer, recurring]
+spec:
+  owner: group:default/para-transferi-teknolojileri
+  domain: domain:default/transfer
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: insurance-onboarding
+  title: InsuranceOnboarding
+  description: Customer onboarding for insurance products.
+  tags: [insurance, onboarding]
+spec:
+  owner: group:default/sigorta-teknolojileri
+  domain: domain:default/insurance
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: policy-management
+  title: PolicyManagement
+  description: Policy lifecycle management for insurance products.
+  tags: [insurance, policy]
+spec:
+  owner: group:default/sigorta-teknolojileri
+  domain: domain:default/insurance
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: claim-handling
+  title: ClaimHandling
+  description: Claim registration and handling workflows.
+  tags: [insurance, claims]
+spec:
+  owner: group:default/sigorta-teknolojileri
+  domain: domain:default/insurance
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: insurance-billing
+  title: InsuranceBilling
+  description: Billing, invoicing and payment for insurance products.
+  tags: [insurance, billing]
+spec:
+  owner: group:default/sigorta-teknolojileri
+  domain: domain:default/insurance
+  lifecycle: production

@@ -1,0 +1,169 @@
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: infrastructure
+  title: Infrastructure
+  description: Core IT infrastructure and platform capabilities.
+  tags: [infrastructure]
+spec:
+  owner: group:default/altyapi-mimari-yonetimi
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: treasury
+  title: Treasury
+  description: Treasury trading, liquidity and position management.
+  tags: [treasury]
+spec:
+  owner: group:default/hazine-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: crm
+  title: CRM
+  description: Customer relationship management and engagement platforms.
+  tags: [crm]
+spec:
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: customer
+  title: Customer
+  description: Customer data, 360 view and interactions.
+  tags: [customer]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: sales
+  title: Sales
+  description: Sales pipeline, offers and performance management.
+  tags: [sales]
+spec:
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: investments
+  title: Investments
+  description: Investment products, order routing and portfolio management.
+  tags: [investments]
+spec:
+  owner: group:default/yatirim-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: payments
+  title: Payments
+  description: Card-present and digital payments across channels.
+  tags: [payments]
+spec:
+  owner: group:default/odeme-sistemleri-teknolojileri-bolumu
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: cards
+  title: Cards
+  description: Credit and debit card lifecycle, billing and collections.
+  tags: [cards]
+spec:
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: merchant
+  title: Merchant
+  description: Merchant onboarding, servicing and settlement.
+  tags: [merchant]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: pos
+  title: POS
+  description: POS terminal management and acquiring transaction routing.,
+  tags: [pos]
+spec:
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: digital
+  title: Digital
+  description: Internet banking and digital onboarding channels.
+  tags: [digital]
+spec:
+  owner: group:default/dijital-bankacilik-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: enterprise-architecture
+  title: Enterprise Architecture
+  description: Architecture standards, repository and roadmaps.
+  tags: [enterprise-architecture]
+spec:
+  owner: group:default/kurumsal-mimari
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: mobile
+  title: Mobile
+  description: Mobile banking applications and mobile platform services.
+  tags: [mobile]
+spec:
+  owner: group:default/mobil-bankacilik-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: loan
+  title: Loan
+  description: Retail and corporate loan origination and servicing.
+  tags: [loan]
+spec:
+  owner: group:default/temel-bankacilik-teknolojileri-bolumu
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: cash-management
+  title: Cash Management
+  description: Corporate cash management and liquidity services.
+  tags: [cash-management]
+spec:
+  owner: group:default/nakit-yonetimi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: transfer
+  title: Transfer
+  description: Domestic and cross-border funds transfer capabilities.
+  tags: [transfer]
+spec:
+  owner: group:default/para-transferi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: insurance
+  title: Insurance
+  description: Bancassurance and insurance product lifecycle services.
+  tags: [insurance]
+spec:
+  owner: group:default/sigorta-teknolojileri
