@@ -9,9 +9,6 @@ metadata:
   {% for t in values.tags %}- {{ t | dump }}
   {% endfor %}
   {% endif %}
-  {% set ann = {} %}
-  {% if values.technology %}{% set _ = ann.__setitem__('technology', values.technology) %}{% endif %}
-  {% if values.version %}{% set _ = ann.__setitem__('version', values.version) %}{% endif %}
 
   {% if values.technology or values.version %}
   annotations:
