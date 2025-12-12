@@ -19,7 +19,19 @@ spec:
   type: messaging
   owner: group:default/altyapi-mimari-yonetimi
   system: platform-engineering
-
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ibm-mq-cluster
+  description: Shared event streaming cluster.
+  annotations:
+    technology: IBM MQ
+    version: TBD
+spec:
+  type: messaging
+  owner: group:default/altyapi-mimari-yonetimi
+  system: platform-engineering
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource
@@ -212,13 +224,22 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: customer-profile-db
-  annotations: { technology: Database, version: TBD }
+  name: customer-profile-oracle-db
+  annotations: { technology: oracle, version: 19c }
 spec:
   type: database
   owner: group:default/musteri-satis-yonetimi-teknolojileri
   system: customer-profile
-
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: customer-profile-db2
+  annotations: { technology: db2, version: 3 }
+spec:
+  type: database
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-profile
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Resource

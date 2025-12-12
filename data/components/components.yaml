@@ -490,8 +490,9 @@ spec:
   owner: group:default/musteri-satis-yonetimi-teknolojileri
   system: customer-profile
   dependsOn:
-    - resource:default/customer-profile-db
+    - resource:default/customer-profile-oracle-db
     - resource:default/kafka-cluster
+    - resource:default/redis-cluster
 
 ---
 apiVersion: backstage.io/v1alpha1
@@ -507,7 +508,20 @@ spec:
     - component:default/customer-profile-service
     - component:default/api-gateway
     - resource:default/redis-cluster
-
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-profile-mf
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-profile
+  dependsOn:
+    - component:default/customer-profile-service
+    - resource:default/ibm-mq-cluster
+    - resource:default/customer-profile-db2
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
