@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: {{ values.entityName }}
+  {% if values.title %}title: {{ values.title | dump }}{% endif %}
+  {% if values.description %}description: {{ values.description | dump }}{% endif %}
+  {% if values.tags and values.tags.length > 0 %}
+  tags:
+  {% for t in values.tags %}- {{ t | dump }}
+  {% endfor %}
+  {% endif %}
+spec:
+  owner: {{ values.owner | dump }}
+  {% if values.domain %}domain: {{ values.domain | dump }}{% endif %}

@@ -1,0 +1,66 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-domain
+  title: Create Domain
+  description: Scaffold a new Domain entity in the Catalog
+spec:
+  owner: group:platform-engineering
+  type: catalog
+
+  parameters:
+    - title: Domain details
+      required: [entityName, owner]
+      properties:
+        entityName:
+          title: metadata.name
+          type: string
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          description: kebab-case (e.g. payments)
+        title:
+          title: metadata.title (e.g. Payments)
+          type: string
+        description:
+          title: metadata.description
+          type: string
+        owner:
+          title: spec.owner
+          type: string
+          description: Use group:... format
+          ui:field: OwnerPicker
+        tags:
+          title: metadata.tags (optional)
+          type: array
+          items: { type: string }
+
+  steps:
+    - id: render
+      name: Render Domain entity YAML
+      action: fetch:template
+      input:
+        templateUrl: ./skeleton
+        targetPath: .
+        values:
+          entityName: ${{ parameters.entityName }}
+          title: ${{ parameters.title }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          tags: ${{ parameters.tags }}
+
+    - id: pr
+      name: Open Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
+        branchName: catalog/domain-${{ parameters.entityName }}
+        title: "catalog: add domain ${{ parameters.entityName }}"
+        description: "Add Domain entity in Catalog for ${{ parameters.entityName }}"
+        targetBranchName: main
+        sourcePath: .
+        targetPath: .
+        update: true
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps.pr.output.remoteUrl }}

@@ -1,0 +1,70 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-system
+  title: Create System
+  description: Scaffold a new System entity for Domain in the Catalog
+spec:
+  owner: group:platform-engineering
+  type: catalog
+
+  parameters:
+    - title: System details
+      required: [entityName, owner]
+      properties:
+        entityName:
+          title: metadata.name
+          type: string
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          description: kebab-case (e.g. fast-transfers)
+        title:
+          title: metadata.title (e.g. Fast Transfers)
+          type: string
+        description:
+          title: metadata.description
+          type: string
+        owner:
+          title: spec.owner
+          type: string
+          ui:field: OwnerPicker
+        domain:
+          title: spec.domain (recommended)
+          type: string
+          description: Domain name (e.g. payments)
+        tags:
+          title: metadata.tags (optional)
+          type: array
+          items: { type: string }
+
+  steps:
+    - id: render
+      name: Render System entity YAML
+      action: fetch:template
+      input:
+        templateUrl: ./skeleton
+        targetPath: .
+        values:
+          entityName: ${{ parameters.entityName }}
+          title: ${{ parameters.title }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          domain: ${{ parameters.domain }}
+          tags: ${{ parameters.tags }}
+
+    - id: pr
+      name: Open Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
+        branchName: catalog/system-${{ parameters.entityName }}
+        title: "catalog: add system ${{ parameters.entityName }}"
+        description: "Add System entity in Catalog for ${{ parameters.entityName }}"
+        targetBranchName: main
+        sourcePath: .
+        targetPath: .
+        update: true
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps.pr.output.remoteUrl }}

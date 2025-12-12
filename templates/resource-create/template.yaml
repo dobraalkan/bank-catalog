@@ -1,0 +1,181 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-resource
+  title: Create Resource
+  description: Scaffold a new Resource entity in the Catalog
+spec:
+  owner: group:platform-engineering
+  type: catalog
+
+  parameters:
+    - title: Resource details
+      required: [entityName, owner, resourceType]
+      properties:
+        entityName:
+          title: metadata.name
+          type: string
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          description: kebab-case (e.g. payments-ledger-db)
+        title:
+          title: metadata.title (e.g. Payments Ledger Database)
+          type: string
+        description:
+          title: metadata.description
+          type: string
+        owner:
+          title: spec.owner
+          type: string
+          ui:field: OwnerPicker
+        resourceType:
+          title: spec.type
+          type: string
+          enum: [database, kafka-topic, queue, bucket, cache, kms-key, namespace, service-account]
+        technology:
+          title: Technology
+          type: string
+          description: Select the underlying technology (DB, broker, cache, etc.)
+          enum:
+            # Databases (SQL)
+            - postgres
+            - oracle
+            - mssql
+            - mysql
+            - mariadb
+            - db2
+            - sybase
+            - sqlite
+            - cockroachdb
+            - yugabytedb
+            - tidb
+            - aurora
+            - spanner
+
+            # Databases (NoSQL)
+            - mongodb
+            - cassandra
+            - couchbase
+            - dynamodb
+            - hbase
+            - cosmosdb
+            - neo4j
+
+            # Data warehouse / analytics
+            - snowflake
+            - bigquery
+            - redshift
+            - synapse
+            - clickhouse
+            - databricks
+
+            # Cache / in-memory
+            - redis
+            - memcached
+            - hazelcast
+            - ignite
+
+            # Messaging / streaming
+            - kafka
+            - rabbitmq
+            - activemq
+            - ibm-mq
+            - pulsar
+            - nats
+            - sqs
+            - pubsub
+            - servicebus
+
+            # Search
+            - elasticsearch
+            - opensearch
+            - solr
+
+            # Object storage
+            - s3
+            - minio
+            - ceph
+            - gcs
+            - azure-blob
+
+            # Kubernetes / platform
+            - kubernetes
+            - openshift
+
+            # Service mesh / gateway / proxy
+            - istio
+            - linkerd
+            - kong
+            - apigee
+            - nginx
+            - envoy
+
+            # Identity / secrets
+            - keycloak
+            - okta
+            - pingfederate
+            - vault
+            - kms
+
+            # Observability
+            - prometheus
+            - grafana
+            - loki
+            - elastic-stack
+            - datadog
+            - dynatrace
+            - newrelic
+            - jaeger
+            - zipkin
+
+            # CI/CD & workflow
+            - jenkins
+            - github-actions
+            - gitlab-ci
+            - argo-cd
+            - flux
+            - airflow
+            - argo-workflows
+
+        version:
+          title: Version (optional)
+          type: string
+          description: e.g. 16, 19c, 7.2, etc.
+        tags:
+          title: metadata.tags (optional)
+          type: array
+          items: { type: string }
+
+  steps:
+    - id: render
+      name: Render Resource entity YAML
+      action: fetch:template
+      input:
+        templateUrl: ./skeleton
+        targetPath: .
+        values:
+          entityName: ${{ parameters.entityName }}
+          title: ${{ parameters.title }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          resourceType: ${{ parameters.resourceType }}
+          tags: ${{ parameters.tags }}
+          technology: ${{ parameters.technology }}
+          version: ${{ parameters.version }}
+
+    - id: pr
+      name: Open Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
+        branchName: catalog/resource-${{ parameters.entityName }}
+        title: "catalog: add resource ${{ parameters.entityName }}"
+        description: "Add Resource entity in the Catalog for ${{ parameters.entityName }}"
+        targetBranchName: main
+        sourcePath: .
+        targetPath: .
+        update: true
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps.pr.output.remoteUrl }}
