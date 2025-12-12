@@ -39,7 +39,6 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: .
         values:
           entityName: ${{ parameters.entityName }}
           title: ${{ parameters.title }}
@@ -47,18 +46,13 @@ spec:
           owner: ${{ parameters.owner }}
           tags: ${{ parameters.tags }}
 
-    - id: pr
-      name: Open Pull Request
-      action: publish:github:pull-request
+    - id: pb
+      name: Publish
+      action: publish:github
       input:
         repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
-        branchName: catalog/domain-${{ parameters.entityName }}
         title: "catalog: add domain ${{ parameters.entityName }}"
-        description: "Add Domain entity in Catalog for ${{ parameters.entityName }}"
         targetBranchName: main
-        sourcePath: .
-        targetPath: .
-        update: true
 
   output:
     links:

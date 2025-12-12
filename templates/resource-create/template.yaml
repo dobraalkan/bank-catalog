@@ -151,7 +151,6 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: .
         values:
           entityName: ${{ parameters.entityName }}
           title: ${{ parameters.title }}
@@ -162,18 +161,13 @@ spec:
           technology: ${{ parameters.technology }}
           version: ${{ parameters.version }}
 
-    - id: pr
-      name: Open Pull Request
-      action: publish:github:pull-request
+    - id: pb
+      name: Publish
+      action: publish:github
       input:
         repoUrl: github.com?owner=dobraalkan&repo=bank-catalog
-        branchName: catalog/resource-${{ parameters.entityName }}
         title: "catalog: add resource ${{ parameters.entityName }}"
-        description: "Add Resource entity in the Catalog for ${{ parameters.entityName }}"
         targetBranchName: main
-        sourcePath: .
-        targetPath: .
-        update: true
 
   output:
     links:
