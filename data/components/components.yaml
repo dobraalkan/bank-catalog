@@ -483,6 +483,18 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: customer-profile-face
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-profile
+  dependsOn:
+    - component:default/customer-profile-bff
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: customer-profile-service
 spec:
   type: service
