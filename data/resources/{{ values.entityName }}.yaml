@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: {{ values.entityName }}
+  title: {{ values.title | dump }}
+  description: {{ values.description | dump }}
+  
+  tags:
+  - {{ t | dump }}
+  
+  
+
+  
+  annotations:
+    technology: {{ values.technology | dump }}
+    version: {{ values.version | dump }}
+  
+spec:
+  type: {{ values.resourceType | dump }}
+  owner: {{ values.owner | dump }}
