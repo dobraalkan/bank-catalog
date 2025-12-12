@@ -1,0 +1,46 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: bank-catalog-entity-delete
+  title: Bank Catalog - Entity Delete
+  description: bank-catalog repo içinden entity yaml dosyasını siler (PR açar).
+spec:
+  owner: group:platform-engineering
+  type: catalog
+
+  parameters:
+    - title: Silinecek entity
+      required: [catalogRepoUrl, kind, entityName]
+      properties:
+        catalogRepoUrl:
+          title: bank-catalog repo
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: ['github.com']
+        kind:
+          title: Entity Kind
+          type: string
+          enum: [Domain, System, Component, API, Resource, Group]
+        entityName:
+          title: metadata.name (kebab-case)
+          type: string
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+
+  steps:
+    - id: pr
+      name: Open Pull Request (delete file)
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.catalogRepoUrl }}
+        branchName: catalog/delete-${{ parameters.kind | lower }}-${{ parameters.entityName }}
+        title: "catalog: delete ${{ parameters.kind }} ${{ parameters.entityName }}"
+        description: "Delete entity file from bank-catalog data/."
+        targetBranchName: main
+        filesToDelete:
+          - data/${{ parameters.kind | lower }}s/${{ parameters.entityName }}.yaml
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps.pr.output.remoteUrl }}

@@ -1,0 +1,112 @@
+apiVersion: backstage.io/v1alpha1
+kind: {{ values.kind }}
+metadata:
+  name: {{ values.entityName }}
+  {% if values.title %}title: {{ values.title | dump }}{% endif %}
+  {% if values.description %}description: {{ values.description | dump }}{% endif %}
+
+  {% if values.tags and values.tags.length > 0 %}
+  tags:
+  {% for t in values.tags %}- {{ t | dump }}
+  {% endfor %}
+  {% endif %}
+
+  {% set ann = values.annotations or {} %}
+  {% if values.criticality %}{% set _ = ann.__setitem__('bank.com/criticality', values.criticality) %}{% endif %}
+  {% if values.dataClassification %}{% set _ = ann.__setitem__('bank.com/data-classification', values.dataClassification) %}{% endif %}
+  {% if values.compliance and values.compliance.length > 0 %}{% set _ = ann.__setitem__('bank.com/compliance', (values.compliance | join(','))) %}{% endif %}
+  {% if values.oncall %}{% set _ = ann.__setitem__('backstage.io/oncall', values.oncall) %}{% endif %}
+  {% if values.runbookUrl %}{% set _ = ann.__setitem__('backstage.io/runbook-url', values.runbookUrl) %}{% endif %}
+  {% if values.dashboardUrl %}{% set _ = ann.__setitem__('backstage.io/dashboard-url', values.dashboardUrl) %}{% endif %}
+  {% if values.logsUrl %}{% set _ = ann.__setitem__('backstage.io/logs-url', values.logsUrl) %}{% endif %}
+  {% if values.tracesUrl %}{% set _ = ann.__setitem__('backstage.io/traces-url', values.tracesUrl) %}{% endif %}
+
+  {% if ann and (ann | length) > 0 %}
+  annotations:
+  {% for k, v in ann %}
+    {{ k }}: {{ v | dump }}
+  {% endfor %}
+  {% endif %}
+
+  {% if values.labels and (values.labels | length) > 0 %}
+  labels:
+  {% for k, v in values.labels %}
+    {{ k }}: {{ v | dump }}
+  {% endfor %}
+  {% endif %}
+
+  {% if values.links and values.links.length > 0 %}
+  links:
+  {% for l in values.links %}
+    - url: {{ l.url | dump }}
+      title: {{ l.title | dump }}
+      {% if l.icon %}icon: {{ l.icon | dump }}{% endif %}
+  {% endfor %}
+  {% endif %}
+
+spec:
+{% if values.kind == 'Domain' %}
+  owner: {{ values.owner | dump }}
+
+{% elif values.kind == 'System' %}
+  owner: {{ values.owner | dump }}
+  {% if values.domain %}domain: {{ values.domain | dump }}{% endif %}
+
+{% elif values.kind == 'Component' %}
+  type: {{ (values.componentType or 'service') | dump }}
+  lifecycle: {{ (values.lifecycle or 'production') | dump }}
+  owner: {{ values.owner | dump }}
+  {% if values.system %}system: {{ values.system | dump }}{% endif %}
+  {% if values.dependsOn and values.dependsOn.length > 0 %}
+  dependsOn:
+  {% for d in values.dependsOn %}- {{ d | dump }}
+  {% endfor %}
+  {% endif %}
+  {% if values.providesApis and values.providesApis.length > 0 %}
+  providesApis:
+  {% for a in values.providesApis %}- {{ a | dump }}
+  {% endfor %}
+  {% endif %}
+  {% if values.consumesApis and values.consumesApis.length > 0 %}
+  consumesApis:
+  {% for a in values.consumesApis %}- {{ a | dump }}
+  {% endfor %}
+  {% endif %}
+
+{% elif values.kind == 'API' %}
+  type: {{ (values.apiType or 'openapi') | dump }}
+  lifecycle: {{ (values.lifecycle or 'production') | dump }}
+  owner: {{ values.owner | dump }}
+  {% if values.system %}system: {{ values.system | dump }}{% endif %}
+  {% if values.apiDefinitionUrl %}
+  definition:
+    $text: {{ values.apiDefinitionUrl | dump }}
+  {% else %}
+  definition: |
+{{ (values.apiDefinitionInline or '') | indent(4, true) }}
+  {% endif %}
+
+{% elif values.kind == 'Resource' %}
+  type: {{ (values.resourceType or 'database') | dump }}
+  owner: {{ values.owner | dump }}
+  {% if values.system %}system: {{ values.system | dump }}{% endif %}
+  {% if values.dependsOn and values.dependsOn.length > 0 %}
+  dependsOn:
+  {% for d in values.dependsOn %}- {{ d | dump }}
+  {% endfor %}
+  {% endif %}
+
+{% elif values.kind == 'Group' %}
+  type: {{ (values.groupType or 'team') | dump }}
+  {% if values.parent %}parent: {{ values.parent | dump }}{% endif %}
+  {% if values.children and values.children.length > 0 %}
+  children:
+  {% for c in values.children %}- {{ c | dump }}
+  {% endfor %}
+  {% endif %}
+  {% if values.members and values.members.length > 0 %}
+  members:
+  {% for m in values.members %}- {{ m | dump }}
+  {% endfor %}
+  {% endif %}
+{% endif %}
