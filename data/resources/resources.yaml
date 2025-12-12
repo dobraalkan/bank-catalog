@@ -235,7 +235,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
   name: customer-profile-db2
-  annotations: { technology: db2, version: 3 }
+  annotations: { technology: db2, version: '3.2' }
 spec:
   type: database
   owner: group:default/musteri-satis-yonetimi-teknolojileri
