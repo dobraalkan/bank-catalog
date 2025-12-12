@@ -885,3 +885,39 @@ spec:
   owner: group:default/sigorta-teknolojileri
   domain: domain:default/insurance
   lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: branch-banking
+  title: BranchBanking
+  description: Branch banking channel systems and branch-assisted journeys.
+  tags: [branch, channel]
+spec:
+  owner: group:default/sube-bankaciligi-teknolojileri
+  domain: domain:default/branch
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: call-center-banking
+  title: CallCenterBanking
+  description: Call center channel systems for customer service and assisted operations.
+  tags: [call-center, channel]
+spec:
+  owner: group:default/cagri-merkezi-teknolojileri
+  domain: domain:default/call-center
+  lifecycle: production
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: open-banking
+  title: OpenBanking
+  description: Open banking channel system for third-party API access and consent-driven journeys.
+  tags: [open-banking, channel, api]
+spec:
+  owner: group:default/acik-bankacilik-teknolojileri
+  domain: domain:default/open-banking
+  lifecycle: production

@@ -1,429 +1,2284 @@
 # components.yaml
-# Not: spec.system alanlarını kendi systems.yaml içindeki metadata.name'ler ile eşleştir.
-# dependsOn referansları: component:default/<name> ve resource:default/<name>
 
+# -------------------------
+# SHARED PLATFORM COMPONENTS
+# -------------------------
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: branch-frontend
-  description: Şube ekranları (teller/gişe + operasyon) arayüzü
+  name: api-gateway
+  description: Shared API Gateway for channels and internal services.
 spec:
-  type: website
+  type: service
   lifecycle: production
-  owner: group:default/channel-branch
-  system: channel-branch
+  owner: group:default/altyapi-mimari-yonetimi
+  system: platform-engineering
   dependsOn:
-    - component:default/branch-bff
-    - component:default/identity-service
+    - resource:default/api-gateway
+    - resource:default/vault-kms
+    - resource:default/kafka-cluster
 
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: mobile-app
-  description: Mobil bankacılık uygulaması
-spec:
-  type: mobile-app
-  lifecycle: production
-  owner: group:default/channel-mobile
-  system: channel-mobile
-  dependsOn:
-    - component:default/mobile-bff
-
+# -------------------------
+# CHANNEL UIs (one per channel system)
+# -------------------------
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: internet-banking-frontend
-  description: İnternet bankacılığı web arayüzü
+  description: Internet banking web UI.
 spec:
   type: website
   lifecycle: production
-  owner: group:default/channel-internet
-  system: channel-internet
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: internet-banking
   dependsOn:
-    - component:default/web-bff
+    - component:default/internet-banking-bff
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: atm-app
-  description: ATM uygulaması (ATM üzerinde çalışan kanal yazılımı)
+  name: mobile-banking-app
+  description: Mobile banking native apps (iOS/Android).
 spec:
-  type: service
+  type: mobile-app
   lifecycle: production
-  owner: group:default/channel-atm
-  system: channel-atm
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-banking
   dependsOn:
-    - component:default/atm-switch-adapter
-    - component:default/cards-service
-    - component:default/identity-service
+    - component:default/mobile-banking-bff
+    - component:default/mobile-app-platform-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: branch-banking-desktop
+  description: Branch/teller desktop UI.
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default/sube-bankaciligi-teknolojileri
+  system: branch-banking
+  dependsOn:
+    - component:default/branch-banking-bff
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: call-center-desktop
-  description: Çağrı merkezi temsilci uygulaması (desktop/web)
+  description: Call center agent desktop UI.
 spec:
   type: website
   lifecycle: production
-  owner: group:default/channel-call-center
-  system: channel-call-center
+  owner: group:default/cagri-merkezi-teknolojileri
+  system: call-center-banking
   dependsOn:
-    - component:default/call-center-bff
-    - component:default/crm-service
-    - component:default/identity-service
+    - component:default/call-center-banking-bff
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: open-banking-api
-  description: Açık bankacılık dış API yüzeyi (PSD2/OB standardı)
+  name: open-banking-portal
+  description: Open banking developer portal / admin UI.
 spec:
-  type: service
+  type: website
   lifecycle: production
-  owner: group:default/channel-open-banking
-  system: channel-open-banking
+  owner: group:default/acik-bankacilik-teknolojileri
+  system: open-banking
   dependsOn:
-    - component:default/api-gateway
     - component:default/open-banking-bff
-    - component:default/consent-service
-
-# --- BFF / Experience Layer ---
+    - component:default/api-gateway
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: mobile-bff
-  description: Mobil kanal için BFF (orchestrator)
+  name: atm-terminal-app
+  description: ATM terminal application (on-device UI/runtime).
 spec:
   type: service
   lifecycle: production
-  owner: group:default/digital-experience
-  system: digital-experience
+  owner: group:default/atm-teknolojileri
+  system: atm-network
   dependsOn:
+    - component:default/atm-network-bff
+    - component:default/atm-device-management-bff
+
+# -------------------------
+# SYSTEM PATTERN (service + bff)
+# - bff dependsOn: service + shared gateway/cache/stream
+# - service dependsOn: its db + stream/cache (as needed)
+# -------------------------
+
+# === infrastructure domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: infra-architecture-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: infra-architecture
+  dependsOn:
+    - resource:default/infra-architecture-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: infra-architecture-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: infra-architecture
+  dependsOn:
+    - component:default/infra-architecture-service
     - component:default/api-gateway
-    - component:default/identity-service
-    - component:default/customer-profile-service
-    - component:default/accounts-service
-    - component:default/payments-orchestrator
-    - component:default/limits-service
-    - component:default/notifications-service
     - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: platform-engineering-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: platform-engineering
+  dependsOn:
+    - resource:default/platform-engineering-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: platform-engineering-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: platform-engineering
+  dependsOn:
+    - component:default/platform-engineering-service
+    - component:default/api-gateway
     - resource:default/kafka-cluster
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: web-bff
-  description: İnternet bankacılığı için BFF
+  name: environment-provisioning-service
 spec:
   type: service
   lifecycle: production
-  owner: group:default/digital-experience
-  system: digital-experience
+  owner: group:default/altyapi-mimari-yonetimi
+  system: environment-provisioning
   dependsOn:
+    - resource:default/environment-provisioning-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: environment-provisioning-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: environment-provisioning
+  dependsOn:
+    - component:default/environment-provisioning-service
     - component:default/api-gateway
-    - component:default/identity-service
-    - component:default/customer-profile-service
-    - component:default/accounts-service
-    - component:default/payments-orchestrator
-    - component:default/limits-service
-    - component:default/notifications-service
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: infra-automation-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: infra-automation
+  dependsOn:
+    - resource:default/infra-automation-db
+    - resource:default/vault-kms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: infra-automation-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/altyapi-mimari-yonetimi
+  system: infra-automation
+  dependsOn:
+    - component:default/infra-automation-service
+    - component:default/api-gateway
+
+# === treasury domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: treasury-positioning-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: treasury-positioning
+  dependsOn:
+    - resource:default/treasury-positioning-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: treasury-positioning-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: treasury-positioning
+  dependsOn:
+    - component:default/treasury-positioning-service
+    - component:default/api-gateway
     - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: liquidity-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: liquidity-management
+  dependsOn:
+    - resource:default/liquidity-management-db
     - resource:default/kafka-cluster
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: branch-bff
-  description: Şube süreçleri için BFF (müşteri 360, işlem orkestrasyonu)
+  name: liquidity-management-bff
 spec:
   type: service
   lifecycle: production
-  owner: group:default/channel-branch
-  system: channel-branch
+  owner: group:default/hazine-teknolojileri
+  system: liquidity-management
   dependsOn:
+    - component:default/liquidity-management-service
     - component:default/api-gateway
-    - component:default/identity-service
-    - component:default/customer-profile-service
-    - component:default/accounts-service
-    - component:default/payments-orchestrator
-    - component:default/loans-service
-    - component:default/cards-service
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: treasury-dealing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: treasury-dealing
+  dependsOn:
+    - resource:default/treasury-dealing-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: treasury-dealing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: treasury-dealing
+  dependsOn:
+    - component:default/treasury-dealing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: treasury-settlement-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/hazine-teknolojileri
+  system: treasury-settlement
+  dependsOn:
+    - resource:default/treasury-settlement-db
     - resource:default/kafka-cluster
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: call-center-bff
-  description: Çağrı merkezi için BFF
+  name: treasury-settlement-bff
 spec:
   type: service
   lifecycle: production
-  owner: group:default/channel-call-center
-  system: channel-call-center
+  owner: group:default/hazine-teknolojileri
+  system: treasury-settlement
   dependsOn:
+    - component:default/treasury-settlement-service
     - component:default/api-gateway
-    - component:default/identity-service
-    - component:default/customer-profile-service
-    - component:default/accounts-service
-    - component:default/payments-orchestrator
-    - component:default/crm-service
+
+# === crm domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-profile-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-profile
+  dependsOn:
+    - resource:default/crm-profile-db
     - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-profile-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-profile
+  dependsOn:
+    - component:default/crm-profile-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-insights-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-insights
+  dependsOn:
+    - resource:default/crm-insights-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-insights-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-insights
+  dependsOn:
+    - component:default/crm-insights-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-segmentation-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-segmentation
+  dependsOn:
+    - resource:default/crm-segmentation-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-segmentation-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-segmentation
+  dependsOn:
+    - component:default/crm-segmentation-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-loyalty-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-loyalty
+  dependsOn:
+    - resource:default/crm-loyalty-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-loyalty-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-loyalty
+  dependsOn:
+    - component:default/crm-loyalty-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-campaigns-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-campaigns
+  dependsOn:
+    - resource:default/crm-campaigns-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crm-campaigns-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-iliski-yonetimi-teknolojileri
+  system: crm-campaigns
+  dependsOn:
+    - component:default/crm-campaigns-service
+    - component:default/api-gateway
+
+# === customer domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-profile-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-profile
+  dependsOn:
+    - resource:default/customer-profile-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-profile-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-profile
+  dependsOn:
+    - component:default/customer-profile-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-360-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-360
+  dependsOn:
+    - resource:default/customer-360-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-360-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-360
+  dependsOn:
+    - component:default/customer-360-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-interaction-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-interaction
+  dependsOn:
+    - resource:default/customer-interaction-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: customer-interaction-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: customer-interaction
+  dependsOn:
+    - component:default/customer-interaction-service
+    - component:default/api-gateway
+
+# === sales domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sales-pipeline-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: sales-pipeline
+  dependsOn:
+    - resource:default/sales-pipeline-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sales-pipeline-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: sales-pipeline
+  dependsOn:
+    - component:default/sales-pipeline-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: offer-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: offer-management
+  dependsOn:
+    - resource:default/offer-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: offer-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: offer-management
+  dependsOn:
+    - component:default/offer-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sales-performance-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: sales-performance
+  dependsOn:
+    - resource:default/sales-performance-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sales-performance-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/musteri-satis-yonetimi-teknolojileri
+  system: sales-performance
+  dependsOn:
+    - component:default/sales-performance-service
+    - component:default/api-gateway
+
+# === investments domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: investment-products-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: investment-products
+  dependsOn:
+    - resource:default/investment-products-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: investment-products-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: investment-products
+  dependsOn:
+    - component:default/investment-products-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: order-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: order-management
+  dependsOn:
+    - resource:default/order-management-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: order-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: order-management
+  dependsOn:
+    - component:default/order-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: portfolio-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: portfolio-management
+  dependsOn:
+    - resource:default/portfolio-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: portfolio-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: portfolio-management
+  dependsOn:
+    - component:default/portfolio-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: investment-reporting-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: investment-reporting
+  dependsOn:
+    - resource:default/investment-reporting-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: investment-reporting-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/yatirim-teknolojileri
+  system: investment-reporting
+  dependsOn:
+    - component:default/investment-reporting-service
+    - component:default/api-gateway
+
+# === payments domain (atm + digital) ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-network-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-network
+  dependsOn:
+    - resource:default/atm-network-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-network-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-network
+  dependsOn:
+    - component:default/atm-network-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-device-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-device-management
+  dependsOn:
+    - resource:default/atm-device-management-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-device-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-device-management
+  dependsOn:
+    - component:default/atm-device-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-cash-replenishment-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-cash-replenishment
+  dependsOn:
+    - resource:default/atm-cash-replenishment-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atm-cash-replenishment-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/atm-teknolojileri
+  system: atm-cash-replenishment
+  dependsOn:
+    - component:default/atm-cash-replenishment-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-payments-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: digital-payments
+  dependsOn:
+    - resource:default/digital-payments-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-payments-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: digital-payments
+  dependsOn:
+    - component:default/digital-payments-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: wallet-processing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: wallet-processing
+  dependsOn:
+    - resource:default/wallet-processing-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: wallet-processing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: wallet-processing
+  dependsOn:
+    - component:default/wallet-processing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-gateway-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: payment-gateway
+  dependsOn:
+    - resource:default/payment-gateway-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: payment-gateway-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: payment-gateway
+  dependsOn:
+    - component:default/payment-gateway-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: tokenization-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: tokenization
+  dependsOn:
+    - resource:default/tokenization-db
+    - resource:default/vault-kms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: tokenization-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-odeme-teknolojileri
+  system: tokenization
+  dependsOn:
+    - component:default/tokenization-service
+    - component:default/api-gateway
+
+# === cards domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-onboarding-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-onboarding
+  dependsOn:
+    - resource:default/card-onboarding-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-onboarding-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-onboarding
+  dependsOn:
+    - component:default/card-onboarding-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-application-scoring-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-application-scoring
+  dependsOn:
+    - resource:default/card-application-scoring-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-application-scoring-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-application-scoring
+  dependsOn:
+    - component:default/card-application-scoring-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-campaigns-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-campaigns
+  dependsOn:
+    - resource:default/card-campaigns-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-campaigns-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-basvuru-ve-kampanya-teknolojileri
+  system: card-campaigns
+  dependsOn:
+    - component:default/card-campaigns-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-core-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-core
+  dependsOn:
+    - resource:default/card-core-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-core-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-core
+  dependsOn:
+    - component:default/card-core-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-limit-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-limit-management
+  dependsOn:
+    - resource:default/card-limit-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-limit-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-limit-management
+  dependsOn:
+    - component:default/card-limit-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-billing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-billing
+  dependsOn:
+    - resource:default/card-billing-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-billing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-billing
+  dependsOn:
+    - component:default/card-billing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-collections-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-collections
+  dependsOn:
+    - resource:default/card-collections-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: card-collections-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kart-yonetim-sistemi-teknolojileri
+  system: card-collections
+  dependsOn:
+    - component:default/card-collections-service
+    - component:default/api-gateway
+
+# === merchant domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-onboarding-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-onboarding
+  dependsOn:
+    - resource:default/merchant-onboarding-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-onboarding-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-onboarding
+  dependsOn:
+    - component:default/merchant-onboarding-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-settlement-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-settlement
+  dependsOn:
+    - resource:default/merchant-settlement-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-settlement-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-settlement
+  dependsOn:
+    - component:default/merchant-settlement-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-portal-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-portal
+  dependsOn:
+    - resource:default/merchant-portal-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: merchant-portal-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: merchant-portal
+  dependsOn:
+    - component:default/merchant-portal-service
+    - component:default/api-gateway
+
+# === pos domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-terminal-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-terminal-management
+  dependsOn:
+    - resource:default/pos-terminal-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-terminal-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-terminal-management
+  dependsOn:
+    - component:default/pos-terminal-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-transaction-routing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-transaction-routing
+  dependsOn:
+    - resource:default/pos-transaction-routing-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-transaction-routing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-transaction-routing
+  dependsOn:
+    - component:default/pos-transaction-routing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-monitoring-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-monitoring
+  dependsOn:
+    - resource:default/pos-monitoring-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pos-monitoring-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/uye-isyeri-ve-pos-teknolojileri
+  system: pos-monitoring
+  dependsOn:
+    - component:default/pos-monitoring-service
+    - component:default/api-gateway
+
+# === digital domain (internet channel + shared digital capabilities) ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: internet-banking-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: internet-banking
+  dependsOn:
+    - resource:default/internet-banking-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: internet-banking-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: internet-banking
+  dependsOn:
+    - component:default/internet-banking-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+    - component:default/digital-auth-bff
+    - component:default/digital-notifications-bff
+    - component:default/customer-profile-bff
+    - component:default/digital-payments-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-onboarding-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-onboarding
+  dependsOn:
+    - resource:default/digital-onboarding-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-onboarding-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-onboarding
+  dependsOn:
+    - component:default/digital-onboarding-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-auth-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-auth
+  dependsOn:
+    - resource:default/digital-auth-db
+    - resource:default/vault-kms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-auth-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-auth
+  dependsOn:
+    - component:default/digital-auth-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-notifications-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-notifications
+  dependsOn:
+    - resource:default/digital-notifications-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: digital-notifications-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/dijital-bankacilik-teknolojileri
+  system: digital-notifications
+  dependsOn:
+    - component:default/digital-notifications-service
+    - component:default/api-gateway
+
+# === enterprise-architecture domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: architecture-repository-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: architecture-repository
+  dependsOn:
+    - resource:default/architecture-repository-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: architecture-repository-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: architecture-repository
+  dependsOn:
+    - component:default/architecture-repository-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: architecture-standards-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: architecture-standards
+  dependsOn:
+    - resource:default/architecture-standards-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: architecture-standards-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: architecture-standards
+  dependsOn:
+    - component:default/architecture-standards-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: solution-review-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: solution-review
+  dependsOn:
+    - resource:default/solution-review-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: solution-review-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: solution-review
+  dependsOn:
+    - component:default/solution-review-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: roadmap-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: roadmap-management
+  dependsOn:
+    - resource:default/roadmap-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: roadmap-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kurumsal-mimari
+  system: roadmap-management
+  dependsOn:
+    - component:default/roadmap-management-service
+    - component:default/api-gateway
+
+# === mobile domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-banking-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-banking
+  dependsOn:
+    - resource:default/mobile-banking-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-banking-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-banking
+  dependsOn:
+    - component:default/mobile-banking-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+    - component:default/mobile-auth-bff
+    - component:default/push-notifications-bff
+    - component:default/customer-profile-bff
+    - component:default/digital-payments-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-app-platform-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-app-platform
+  dependsOn:
+    - resource:default/mobile-app-platform-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-app-platform-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-app-platform
+  dependsOn:
+    - component:default/mobile-app-platform-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-auth-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-auth
+  dependsOn:
+    - resource:default/mobile-auth-db
+    - resource:default/vault-kms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: mobile-auth-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: mobile-auth
+  dependsOn:
+    - component:default/mobile-auth-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: push-notifications-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: push-notifications
+  dependsOn:
+    - resource:default/push-notifications-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: push-notifications-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/mobil-bankacilik-teknolojileri
+  system: push-notifications
+  dependsOn:
+    - component:default/push-notifications-service
+    - component:default/api-gateway
+
+# === loan domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-origination-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-origination
+  dependsOn:
+    - resource:default/retail-loan-origination-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-origination-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-origination
+  dependsOn:
+    - component:default/retail-loan-origination-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-servicing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-servicing
+  dependsOn:
+    - resource:default/retail-loan-servicing-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-servicing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-servicing
+  dependsOn:
+    - component:default/retail-loan-servicing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-collections-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-collections
+  dependsOn:
+    - resource:default/retail-loan-collections-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: retail-loan-collections-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/bireysel-kredi-teknolojileri
+  system: retail-loan-collections
+  dependsOn:
+    - component:default/retail-loan-collections-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-loan-origination-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-loan-origination
+  dependsOn:
+    - resource:default/corporate-loan-origination-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-loan-origination-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-loan-origination
+  dependsOn:
+    - component:default/corporate-loan-origination-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-loan-servicing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-loan-servicing
+  dependsOn:
+    - resource:default/corporate-loan-servicing-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-loan-servicing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-loan-servicing
+  dependsOn:
+    - component:default/corporate-loan-servicing-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: limit-and-collateral-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: limit-and-collateral
+  dependsOn:
+    - resource:default/limit-and-collateral-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: limit-and-collateral-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: limit-and-collateral
+  dependsOn:
+    - component:default/limit-and-collateral-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-collections-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-collections
+  dependsOn:
+    - resource:default/corporate-collections-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: corporate-collections-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/ticari-kredi-teknolojileri
+  system: corporate-collections
+  dependsOn:
+    - component:default/corporate-collections-service
+    - component:default/api-gateway
+
+# === cash-management domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cash-pooling-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: cash-pooling
+  dependsOn:
+    - resource:default/cash-pooling-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cash-pooling-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: cash-pooling
+  dependsOn:
+    - component:default/cash-pooling-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: liquidity-forecasting-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: liquidity-forecasting
+  dependsOn:
+    - resource:default/liquidity-forecasting-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: liquidity-forecasting-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: liquidity-forecasting
+  dependsOn:
+    - component:default/liquidity-forecasting-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: collections-and-receivables-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: collections-and-receivables
+  dependsOn:
+    - resource:default/collections-and-receivables-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: collections-and-receivables-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: collections-and-receivables
+  dependsOn:
+    - component:default/collections-and-receivables-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: disbursements-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: disbursements
+  dependsOn:
+    - resource:default/disbursements-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: disbursements-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/nakit-yonetimi-teknolojileri
+  system: disbursements
+  dependsOn:
+    - component:default/disbursements-service
+    - component:default/api-gateway
+
+# === transfer domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: funds-transfer-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: funds-transfer
+  dependsOn:
+    - resource:default/funds-transfer-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: funds-transfer-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: funds-transfer
+  dependsOn:
+    - component:default/funds-transfer-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: instant-transfer-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: instant-transfer
+  dependsOn:
+    - resource:default/instant-transfer-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: instant-transfer-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: instant-transfer
+  dependsOn:
+    - component:default/instant-transfer-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: swift-transfer-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: swift-transfer
+  dependsOn:
+    - resource:default/swift-transfer-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: swift-transfer-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: swift-transfer
+  dependsOn:
+    - component:default/swift-transfer-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: standing-orders-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: standing-orders
+  dependsOn:
+    - resource:default/standing-orders-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: standing-orders-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/para-transferi-teknolojileri
+  system: standing-orders
+  dependsOn:
+    - component:default/standing-orders-service
+    - component:default/api-gateway
+
+# === insurance domain ===
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: insurance-onboarding-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: insurance-onboarding
+  dependsOn:
+    - resource:default/insurance-onboarding-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: insurance-onboarding-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: insurance-onboarding
+  dependsOn:
+    - component:default/insurance-onboarding-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: policy-management-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: policy-management
+  dependsOn:
+    - resource:default/policy-management-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: policy-management-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: policy-management
+  dependsOn:
+    - component:default/policy-management-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: claim-handling-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: claim-handling
+  dependsOn:
+    - resource:default/claim-handling-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: claim-handling-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: claim-handling
+  dependsOn:
+    - component:default/claim-handling-service
+    - component:default/api-gateway
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: insurance-billing-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: insurance-billing
+  dependsOn:
+    - resource:default/insurance-billing-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: insurance-billing-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sigorta-teknolojileri
+  system: insurance-billing
+  dependsOn:
+    - component:default/insurance-billing-service
+    - component:default/api-gateway
+
+# -------------------------
+# NEW CHANNEL SYSTEMS YOU ADDED
+# -------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: branch-banking-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sube-bankaciligi-teknolojileri
+  system: branch-banking
+  dependsOn:
+    - resource:default/branch-banking-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: branch-banking-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/sube-bankaciligi-teknolojileri
+  system: branch-banking
+  dependsOn:
+    - component:default/branch-banking-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+    - component:default/customer-360-bff
+    - component:default/customer-profile-bff
+    - component:default/digital-payments-bff
+    - component:default/card-core-bff
+    - component:default/funds-transfer-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: call-center-banking-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/cagri-merkezi-teknolojileri
+  system: call-center-banking
+  dependsOn:
+    - resource:default/call-center-banking-db
+    - resource:default/kafka-cluster
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: call-center-banking-bff
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/cagri-merkezi-teknolojileri
+  system: call-center-banking
+  dependsOn:
+    - component:default/call-center-banking-service
+    - component:default/api-gateway
+    - resource:default/redis-cluster
+    - component:default/customer-360-bff
+    - component:default/customer-interaction-bff
+    - component:default/crm-profile-bff
+    - component:default/digital-auth-bff
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: open-banking-service
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/acik-bankacilik-teknolojileri
+  system: open-banking
+  dependsOn:
+    - resource:default/open-banking-db
+    - resource:default/kafka-cluster
+    - resource:default/vault-kms
 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: open-banking-bff
-  description: Açık bankacılık için orkestrasyon + SCA/consent akışları
 spec:
   type: service
   lifecycle: production
-  owner: group:default/channel-open-banking
-  system: channel-open-banking
+  owner: group:default/acik-bankacilik-teknolojileri
+  system: open-banking
   dependsOn:
+    - component:default/open-banking-service
     - component:default/api-gateway
-    - component:default/identity-service
-    - component:default/consent-service
-    - component:default/customer-profile-service
-    - component:default/accounts-service
-    - component:default/payments-orchestrator
-    - resource:default/kafka-cluster
-
-# --- Domain / Core Services ---
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: identity-service
-  description: Kimlik doğrulama, token, MFA, SSO
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/iam
-  system: identity-access-management
-  dependsOn:
-    - resource:default/iam-db
-    - resource:default/kms
-    - resource:default/sms-gateway
-    - resource:default/email-gateway
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: customer-profile-service
-  description: Müşteri profil/iletişim/segment/KYC temel servisi
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/customer-domain
-  system: customer-domain
-  dependsOn:
-    - resource:default/customer-profile-db
-    - resource:default/customer-events-topic
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: accounts-service
-  description: Hesap, bakiye, hareket, hesap özeti
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/core-banking
-  system: core-banking
-  dependsOn:
-    - resource:default/core-banking-db
-    - component:default/ledger-service
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: ledger-service
-  description: Muhasebe/defter (transaction ledger)
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/core-banking
-  system: core-banking
-  dependsOn:
-    - resource:default/ledger-db
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: payments-orchestrator
-  description: EFT/Havale/FAST/Swift vb ödeme orkestrasyonu
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/payments
-  system: payments
-  dependsOn:
-    - resource:default/payments-db
-    - component:default/limits-service
-    - component:default/fraud-engine
-    - resource:default/payment-events-topic
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: cards-service
-  description: Kart yönetimi, otorizasyon entegrasyonları
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/cards
-  system: cards
-  dependsOn:
-    - resource:default/cards-db
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: loans-service
-  description: Kredi başvuru, teklif, tahsis, geri ödeme planı
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/loans
-  system: loans
-  dependsOn:
-    - resource:default/loans-db
-    - component:default/fraud-engine
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: limits-service
-  description: Limit/kurallar (işlem limitleri, kanal limitleri, risk limitleri)
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/risk
-  system: risk-and-limits
-  dependsOn:
-    - resource:default/limits-db
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: notifications-service
-  description: SMS/e-posta/push bildirimleri
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/communications
-  system: communications
-  dependsOn:
-    - resource:default/notifications-db
-    - resource:default/sms-gateway
-    - resource:default/email-gateway
-    - resource:default/push-gateway
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: consent-service
-  description: Açık bankacılık rıza (consent) ve yetkilendirme kayıtları
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/open-banking
-  system: channel-open-banking
-  dependsOn:
-    - resource:default/consent-db
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: fraud-engine
-  description: Fraud skorlama, anomali, kural motoru
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/fraud
-  system: fraud-and-aml
-  dependsOn:
-    - resource:default/fraud-db
-    - resource:default/fraud-alerts-topic
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: crm-service
-  description: CRM (müşteri 360, etkileşim kayıtları, kampanya)
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/crm
-  system: crm
-  dependsOn:
-    - resource:default/crm-db
-    - resource:default/kafka-cluster
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: atm-switch-adapter
-  description: ATM switch entegrasyon adaptörü
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/channel-atm
-  system: channel-atm
-  dependsOn:
-    - resource:default/atm-db
-    - component:default/cards-service
-    - component:default/accounts-service
-    - resource:default/kafka-cluster
-
-# --- Platform / Shared ---
-
----
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: api-gateway
-  description: Kanal trafiği için API gateway / WAF / rate limit
-spec:
-  type: service
-  lifecycle: production
-  owner: group:default/platform
-  system: platform
-  dependsOn:
-    - resource:default/tls-certificates
-    - resource:default/kms
+    - resource:default/redis-cluster
+    - component:default/digital-auth-bff
+    - component:default/customer-profile-bff
+    - component:default/funds-transfer-bff
+    - component:default/payment-gateway-bff

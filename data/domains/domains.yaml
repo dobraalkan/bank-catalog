@@ -167,3 +167,33 @@ metadata:
   tags: [insurance]
 spec:
   owner: group:default/sigorta-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: branch
+  title: Branch
+  description: Branch banking channel and branch operations domain.
+  tags: [channel, branch]
+spec:
+  owner: group:default/sube-bankaciligi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: call-center
+  title: CallCenter
+  description: Call center banking channel and customer service domain.
+  tags: [channel, call-center]
+spec:
+  owner: group:default/cagri-merkezi-teknolojileri
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: open-banking
+  title: OpenBanking
+  description: Open banking APIs, consent and third-party integrations domain.
+  tags: [channel, open-banking, api]
+spec:
+  owner: group:default/acik-bankacilik-teknolojileri
