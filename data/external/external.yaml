@@ -16,8 +16,8 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Domain
 metadata:
-  name: banking
-  title: Banking
+  name: external
+  title: External
 spec:
   owner: group:default/external
 
@@ -34,7 +34,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -68,7 +68,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -102,7 +102,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -136,7 +136,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -170,7 +170,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -204,7 +204,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -238,7 +238,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
@@ -272,7 +272,7 @@ metadata:
 spec:
   type: external
   owner: group:default/external
-  domain: banking
+  domain: external
   lifecycle: production
 
 ---
