@@ -501,6 +501,10 @@ spec:
   lifecycle: production
   owner: group:default/musteri-satis-yonetimi-teknolojileri
   system: customer-profile
+  consumesApis:
+    - api:default/kps-identity-verify-rest
+  providesApis:
+    - api:default/contact-api
   dependsOn:
     - resource:default/customer-profile-oracle-db
     - resource:default/kafka-cluster

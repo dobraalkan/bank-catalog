@@ -1,0 +1,294 @@
+# ------------------------------------------------------------
+# OWNER / DOMAIN (opsiyonel ama tavsiye edilir)
+# ------------------------------------------------------------
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: external
+  title: External Systems
+spec:
+  type: team
+  profile:
+    displayName: External Systems Team
+  children: []
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: banking
+  title: Banking
+spec:
+  owner: group:default/external
+
+# ------------------------------------------------------------
+# 1) KKB / Findeks (Kredi geçmişi / risk bilgisi)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: kkb
+  title: KKB / Findeks
+  tags: [external, credit-bureau]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kkb-credit-report-rest
+  title: KKB Credit Report REST API
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/kkb/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: kkb
+  definition:
+    $text: https://placeholder.example/kkb/openapi.yaml
+
+# ------------------------------------------------------------
+# 2) KPS / Kimlik Doğrulama (TCKN doğrulama senaryosu)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: kps
+  title: Kimlik Doğrulama (KPS) - Senaryo
+  tags: [external, government, identity]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: kps-identity-verify-rest
+  title: Identity Verification REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/kps/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: kps
+  definition:
+    $text: https://placeholder.example/kps/openapi.yaml
+
+# ------------------------------------------------------------
+# 3) BKM (Kart / ödeme / doğrulama senaryoları)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: bkm
+  title: BKM
+  tags: [external, payments, cards]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: bkm-payment-gateway-rest
+  title: BKM Payment Gateway REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/bkm/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: bkm
+  definition:
+    $text: https://placeholder.example/bkm/openapi.yaml
+
+# ------------------------------------------------------------
+# 4) TCMB (Kur / faiz / referans veri)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tcmb
+  title: TCMB Veri Servisleri (FX/Reference Data)
+  tags: [external, market-data, government]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: tcmb-fx-rates-rest
+  title: TCMB FX Rates REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/tcmb/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: tcmb
+  definition:
+    $text: https://placeholder.example/tcmb/openapi.yaml
+
+# ------------------------------------------------------------
+# 5) GİB (e-Fatura / e-Arşiv / mükellef sorgu senaryosu)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: gib
+  title: Gelir İdaresi Başkanlığı (GİB) - e-Services
+  tags: [external, government, invoicing]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: gib-einvoice-rest
+  title: GİB e-Invoice REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/gib/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: gib
+  definition:
+    $text: https://placeholder.example/gib/openapi.yaml
+
+# ------------------------------------------------------------
+# 6) MASAK / AML Screening (watchlist tarama senaryosu)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: aml-screening
+  title: AML / Sanction Screening Provider
+  tags: [external, compliance, aml]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: aml-screening-rest
+  title: AML Screening REST API
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/aml/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: aml-screening
+  definition:
+    $text: https://placeholder.example/aml/openapi.yaml
+
+# ------------------------------------------------------------
+# 7) Tapu/Kadastro (ipotek/taşınmaz doğrulama senaryosu)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tapu-kadastro
+  title: Tapu & Kadastro Sorgu (Scenario)
+  tags: [external, government, collateral]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: tapu-collateral-check-rest
+  title: Collateral Check REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/tapu/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: tapu-kadastro
+  definition:
+    $text: https://placeholder.example/tapu/openapi.yaml
+
+# ------------------------------------------------------------
+# 8) SGK (çalışan/gelir doğrulama senaryosu)
+# ------------------------------------------------------------
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: sgk
+  title: SGK Veri Servisleri (Scenario)
+  tags: [external, government, income]
+spec:
+  type: external
+  owner: group:default/external
+  domain: banking
+  lifecycle: production
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: sgk-income-verify-rest
+  title: Income Verification REST API (Scenario)
+  tags: [external, rest]
+  links:
+    - url: https://placeholder.example/sgk/docs
+      title: API Docs (Placeholder)
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/external
+  system: sgk
+  definition:
+    $text: https://placeholder.example/sgk/openapi.yaml
