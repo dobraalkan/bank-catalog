@@ -52,6 +52,20 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: kkb
+  definitions:
+    - type: CreditReport
+      properties:
+        customerId:
+          type: string
+        creditScore:
+          type: integer
+        reportDate:
+          type: string
+          format: date-time
+        details:
+          type: object
+          additionalProperties:
+            type: string
 
 # ------------------------------------------------------------
 # 2) KPS / Kimlik Doğrulama (TCKN doğrulama senaryosu)
@@ -84,6 +98,23 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: kps
+  definitions:
+    - type: IdentityVerificationRequest
+      properties:
+        tckn:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthYear:
+          type: integer
+    - type: IdentityVerificationResponse
+      properties:
+        isValid:
+          type: boolean
+        message:
+          type: string
 
 # ------------------------------------------------------------
 # 3) BKM (Kart / ödeme / doğrulama senaryoları)
@@ -116,6 +147,27 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: bkm
+  definitions:
+    - type: PaymentRequest
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        cardNumber:
+          type: string
+        expiryDate:
+          type: string
+        cvv:
+          type: string
+    - type: PaymentResponse
+      properties:
+        transactionId:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
 
 # ------------------------------------------------------------
 # 4) TCMB (Kur / faiz / referans veri)
@@ -148,6 +200,16 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: tcmb
+  definitions:
+    - type: FxRate
+      properties:
+        currencyPair:
+          type: string
+        rate:
+          type: number
+        date:
+          type: string
+          format: date
 
 # ------------------------------------------------------------
 # 5) GİB (e-Fatura / e-Arşiv / mükellef sorgu senaryosu)
@@ -180,6 +242,20 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: gib
+  definitions:
+    - type: Einvoice
+      properties:
+        invoiceId:
+          type: string
+        senderTaxId:
+          type: string
+        receiverTaxId:
+          type: string
+        amount:
+          type: number
+        issueDate:
+          type: string
+          format: date
 
 # ------------------------------------------------------------
 # 6) MASAK / AML Screening (watchlist tarama senaryosu)
@@ -212,6 +288,29 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: aml-screening
+  definitions:
+    - type: AmlScreeningRequest
+      properties:
+        name:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        country:
+          type: string
+    - type: AmlScreeningResponse
+      properties:
+        isMatch:
+          type: boolean
+        matchedEntities:
+          type: array
+          items:
+            type: object
+            properties:
+              entityName:
+                type: string
+              sanctionList:
+                type: string
 
 # ------------------------------------------------------------
 # 7) Tapu/Kadastro (ipotek/taşınmaz doğrulama senaryosu)
@@ -244,6 +343,26 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: tapu-kadastro
+  definitions:
+    - type: CollateralCheckRequest
+      properties:
+        propertyId:
+          type: string
+        ownerTckn:
+          type: string
+    - type: CollateralCheckResponse
+      properties:
+        isEncumbered:
+          type: boolean
+        encumbranceDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              amount:
+                type: number
 
 # ------------------------------------------------------------
 # 8) SGK (çalışan/gelir doğrulama senaryosu)
@@ -276,3 +395,16 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: sgk
+  definitions:
+    - type: IncomeVerificationRequest
+      properties:
+        tckn:
+          type: string
+        employerId:
+          type: string
+    - type: IncomeVerificationResponse
+      properties:
+        isEmployed:
+          type: boolean
+        monthlyIncome:
+          type: number
