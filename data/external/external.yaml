@@ -52,8 +52,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: kkb
-  definition:
-    $text: https://placeholder.example/kkb/openapi.yaml
 
 # ------------------------------------------------------------
 # 2) KPS / Kimlik Doğrulama (TCKN doğrulama senaryosu)
@@ -86,8 +84,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: kps
-  definition:
-    $text: https://placeholder.example/kps/openapi.yaml
 
 # ------------------------------------------------------------
 # 3) BKM (Kart / ödeme / doğrulama senaryoları)
@@ -120,8 +116,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: bkm
-  definition:
-    $text: https://placeholder.example/bkm/openapi.yaml
 
 # ------------------------------------------------------------
 # 4) TCMB (Kur / faiz / referans veri)
@@ -154,8 +148,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: tcmb
-  definition:
-    $text: https://placeholder.example/tcmb/openapi.yaml
 
 # ------------------------------------------------------------
 # 5) GİB (e-Fatura / e-Arşiv / mükellef sorgu senaryosu)
@@ -188,8 +180,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: gib
-  definition:
-    $text: https://placeholder.example/gib/openapi.yaml
 
 # ------------------------------------------------------------
 # 6) MASAK / AML Screening (watchlist tarama senaryosu)
@@ -222,8 +212,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: aml-screening
-  definition:
-    $text: https://placeholder.example/aml/openapi.yaml
 
 # ------------------------------------------------------------
 # 7) Tapu/Kadastro (ipotek/taşınmaz doğrulama senaryosu)
@@ -256,8 +244,6 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: tapu-kadastro
-  definition:
-    $text: https://placeholder.example/tapu/openapi.yaml
 
 # ------------------------------------------------------------
 # 8) SGK (çalışan/gelir doğrulama senaryosu)
@@ -290,5 +276,3 @@ spec:
   lifecycle: production
   owner: group:default/external
   system: sgk
-  definition:
-    $text: https://placeholder.example/sgk/openapi.yaml
